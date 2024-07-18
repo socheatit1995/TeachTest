@@ -41,24 +41,31 @@
                 </CForm>
               </CCardBody>
             </CCard>
-            <CCard class="text-white bg-primary py-5" style="width: 44%">
-              <CCardBody class="text-center">
-                <div>
-                  <h2>Sign up</h2>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                    sed do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
-                  </p>
-                  <CButton color="light" variant="outline" class="mt-3">
-                    Register Now!
-                  </CButton>
-                </div>
-              </CCardBody>
-            </CCard>
           </CCardGroup>
         </CCol>
       </CRow>
     </CContainer>
   </div>
 </template>
+<script>
+import { watch } from 'vue'
+import { useQuery } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
+
+export default {
+  setup () {
+    const { result } = useQuery(gql`
+      query {
+        users {
+          id
+          email
+        }
+      }
+    `)
+
+    watch(() => {
+      console.log(result.value)
+    })
+  },
+}
+</script>

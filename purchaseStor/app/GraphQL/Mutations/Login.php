@@ -38,6 +38,8 @@ final  class Login
     public function logout($root, array $args, GraphQLContext $context)
     {
         auth()->user()->tokens()->delete();
+        Auth::logout();
+
         return true;
     }
 

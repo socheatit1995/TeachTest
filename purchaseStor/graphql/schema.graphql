@@ -33,7 +33,7 @@ type Customer {
 
 type Purchase {
     id: ID!
-    customer: Customer! @belongsTo 
+    customer: Customer! @belongsTo
     amount: Float!
     created_at: DateTime!
     updated_at: DateTime!
@@ -58,28 +58,28 @@ input CustomerSearchInput {
 
 type Query {
     users: [User!]! @all
-    user(id: ID @eq): User @find 
-    userSearch(username: String @like): User @find 
+    user(id: ID @eq): User @find
+    userSearch(username: String @like): User @find
     logout: Boolean! @auth
     me: User @auth
 
     customers: [Customer!]! @all
 
-    customers: [Customer!]! @field(resolver: "App\\GraphQL\\Mutations\\Customer@customers") 
-    customer(search: CustomerSearchInput): Customer @field(resolver: "App\\GraphQL\\Mutations\\Customer@customer") 
-    purchases(customerId: ID!): [Purchase!]!  @field(resolver: "App\\GraphQL\\Mutations\\PurchaseMatation@purchases") 
+    customers: [Customer!]! @field(resolver: "App\\GraphQL\\Mutations\\Customer@customers")
+    customer(search: CustomerSearchInput): Customer @field(resolver: "App\\GraphQL\\Mutations\\Customer@customer")
+    purchases(customerId: ID!): [Purchase!]!  @field(resolver: "App\\GraphQL\\Mutations\\PurchaseMatation@purchases")
 }
 
 
 type Mutation {
-    registerUser(name: String!, email: String!, password: String!, username: String!, role: String!): User! 
-    login(input: LoginInput @spread): AccessToken! @field(resolver: "App\\GraphQL\\Mutations\\Login@login") 
-    logout: Boolean! @field(resolver: "App\\GraphQL\\Mutations\\Login@logout") 
+    registerUser(name: String!, email: String!, password: String!, username: String!, role: String!): User!
+    login(input: LoginInput @spread): AccessToken! @field(resolver: "App\\GraphQL\\Mutations\\Login@login")
+    logout: Boolean! @field(resolver: "App\\GraphQL\\Mutations\\Login@logout")
 
 
-    createCustomer(name: String!, phone_number: String!, address: String, registration_date: Date, score: Int): Customer! @field(resolver: "App\\GraphQL\\Mutations\\Customer@createCustomer") 
-    updateCustomer(id: ID!, name: String, phone_number: String, address: String,  registration_date: Date, score: Int): Customer! @field(resolver: "App\\GraphQL\\Mutations\\Customer@updateCustomer") 
-    deleteCustomer(id: ID!): Boolean! @field(resolver: "App\\GraphQL\\Mutations\\Customer@deleteCustomer") 
+    createCustomer(name: String!, phone_number: String!, address: String, registration_date: Date, score: Int): Customer! @field(resolver: "App\\GraphQL\\Mutations\\Customer@createCustomer")
+    updateCustomer(id: ID!, name: String, phone_number: String, address: String,  registration_date: Date, score: Int): Customer! @field(resolver: "App\\GraphQL\\Mutations\\Customer@updateCustomer")
+    deleteCustomer(id: ID!): Boolean! @field(resolver: "App\\GraphQL\\Mutations\\Customer@deleteCustomer")
 
-    createPurchase(customerId: ID!, amount: Float!): Purchase! @field(resolver: "App\\GraphQL\\Mutations\\PurchaseMatation@createPurchase") 
+    createPurchase(customerId: ID!, amount: Float!): Purchase! @field(resolver: "App\\GraphQL\\Mutations\\PurchaseMatation@createPurchase")
 }

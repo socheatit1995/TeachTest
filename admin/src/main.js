@@ -8,20 +8,9 @@ import CoreuiVue from '@coreui/vue'
 import CIcon from '@coreui/icons-vue'
 import { iconsSet as icons } from '@/assets/icons'
 
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
-import { DefaultApolloClient } from '@vue/apollo-composable'
+import apolloClient from './graphql/client'
+import { DefaultApolloClient} from '@vue/apollo-composable'
 
-const httpLink = createHttpLink({
-    uri: 'http://localhost:8000/graphql',
-})
-
-// const cache = new InMemoryCache()
-
-const apolloClient = new ApolloClient({
-    link: httpLink,
-    cache: new InMemoryCache(),
-
-})
 
 const app = createApp({
     setup () {

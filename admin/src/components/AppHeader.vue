@@ -5,7 +5,12 @@ import { useColorModes } from '@coreui/vue'
 import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
 import AppHeaderDropdownAccnt from '@/components/AppHeaderDropdownAccnt.vue'
 import { useSidebarStore } from '@/stores/sidebar.js'
+import { useMutation, useQuery } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
+import router from '@/router'
+import { useAuthStore } from '@/stores/authStore';
 
+const authStore = useAuthStore()
 const headerClassNames = ref('mb-4 p-0')
 const { colorMode, setColorMode } = useColorModes('coreui-free-vue-admin-template-theme')
 const sidebar = useSidebarStore()
@@ -19,6 +24,29 @@ onMounted(() => {
     }
   })
 })
+
+  const LOGOUT_MUTATION = gql`
+    mutation logout {
+      logout
+    }
+  `;
+
+  const { mutate: logout } = useMutation(LOGOUT_MUTATION);
+  const logoutUser = async () => {
+      try {
+        await logout();
+        router.push('/');
+          // Remove the token from local storage or cookies
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        authStore.setUserData(null)
+          // Redirect to the login page or perform any other necessary actions
+      } catch (error) {
+        console.error(error);
+      }
+  }
+
+
 </script>
 
 <template>
@@ -31,15 +59,15 @@ onMounted(() => {
         <CNavItem>
           <CNavLink href="/dashboard"> Dashboard </CNavLink>
         </CNavItem>
-        <CNavItem>
+        <!-- <CNavItem>
           <CNavLink href="#">Users</CNavLink>
         </CNavItem>
         <CNavItem>
           <CNavLink href="#">Settings</CNavLink>
-        </CNavItem>
+        </CNavItem> -->
       </CHeaderNav>
       <CHeaderNav class="ms-auto">
-        <CNavItem>
+        <!-- <CNavItem>
           <CNavLink href="#">
             <CIcon icon="cil-bell" size="lg" />
           </CNavLink>
@@ -48,14 +76,17 @@ onMounted(() => {
           <CNavLink href="#">
             <CIcon icon="cil-list" size="lg" />
           </CNavLink>
-        </CNavItem>
+        </CNavItem> -->
         <CNavItem>
-          <CNavLink href="#">
-            <CIcon icon="cil-envelope-open" size="lg" />
+          <CNavLink
+             href="javascript:void(0);"
+            @click="logoutUser()"
+          >
+            <CIcon icon="cil-lock-locked" size="lg" /> Logout
           </CNavLink>
         </CNavItem>
       </CHeaderNav>
-      <CHeaderNav>
+      <!-- <CHeaderNav>
         <li class="nav-item py-1">
           <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
         </li>
@@ -99,7 +130,7 @@ onMounted(() => {
           <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
         </li>
         <AppHeaderDropdownAccnt />
-      </CHeaderNav>
+      </CHeaderNav> -->
     </CContainer>
     <CContainer class="px-4" fluid>
       <AppBreadcrumb />

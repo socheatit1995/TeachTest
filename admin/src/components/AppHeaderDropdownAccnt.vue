@@ -5,11 +5,12 @@ const itemsCount = 42
 </script>
 
 <template>
-  <CDropdown placement="bottom-end" variant="nav-item">
+  <!-- <CIcon icon="cil-lock-locked" /> Logout  -->
+  <!-- <CDropdown placement="bottom-end" variant="nav-item">
     <CDropdownToggle class="py-0 pe-0" :caret="false">
       <CAvatar :src="avatar" size="md" />
-    </CDropdownToggle>
-    <CDropdownMenu class="pt-0">
+    </CDropdownToggle> -->
+    <!-- <CDropdownMenu class="pt-0">
       <CDropdownHeader
         component="h6"
         class="bg-body-secondary text-body-secondary fw-semibold mb-2 rounded-top"
@@ -51,6 +52,6 @@ const itemsCount = 42
       <CDropdownDivider />
       <CDropdownItem> <CIcon icon="cil-shield-alt" /> Lock Account </CDropdownItem>
       <CDropdownItem> <CIcon icon="cil-lock-locked" /> Logout </CDropdownItem>
-    </CDropdownMenu>
-  </CDropdown>
+    </CDropdownMenu> -->
+  <!-- </CDropdown> -->
 </template>

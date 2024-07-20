@@ -5,9 +5,15 @@ import DefaultLayout from '@/layouts/DefaultLayout'
 
 const routes = [
   {
-    path: '/',
+      path: '/',
+      name: 'Login',
+      component: () => import('@/views/pages/Login.vue'),
+  },
+  {
+    path: '/admin',
     name: 'Home',
-    redirect: '/login',
+    component: DefaultLayout,
+    redirect: '/dashboard',
     children: [
       {
         path: '/dashboard',
@@ -21,17 +27,51 @@ const routes = [
           ),
       },
       {
-        path: 'login',
-        name: 'Login',
-        component: () => import('@/views/pages/Login'),
+        path: '/users',
+        name: 'Users',
+        component: () => import(
+          /* webpackChunkName: "dashboard" */ '@/views/users/List.vue'
+        ),
       },
       {
-        path: 'register',
-        name: 'Register',
-        component: () => import('@/views/pages/Register'),
+        path: '/users/create',
+        name: 'create-users',
+        component: () => import(
+          /* webpackChunkName: "dashboard" */ '@/views/users/Create.vue'
+        ),
       },
+      {
+        path: '/customers',
+        name: 'Customers',
+        component: () => import(
+          /* webpackChunkName: "dashboard" */ '@/views/customers/List.vue'
+        ),
+      },
+      {
+        path: '/customers/create',
+        name: 'create-customer',
+        component: () => import(
+          /* webpackChunkName: "dashboard" */ '@/views/customers/Create.vue'
+        ),
+      },
+      {
+        path: '/purchase',
+        name: 'Purchase',
+        component: () => import(
+          /* webpackChunkName: "dashboard" */ '@/views/purchase/List.vue'
+        ),
+      },
+      {
+        path: '/purchase/create',
+        name: 'create-purchase',
+        component: () => import(
+          /* webpackChunkName: "dashboard" */ '@/views/purchase/CustomerPurchase.vue'
+        ),
+      },
+
     ],
   },
+
 ]
 
 const router = createRouter({
@@ -41,6 +81,18 @@ const router = createRouter({
     // always scroll to top
     return { top: 0 }
   },
+})
+
+// Global Navigation Guard for Authentication Checks
+router.beforeEach((to, from) => {
+
+    // Check if user is authenticated (has user data) 
+  const userData = localStorage.getItem('user');
+  if (!userData && to.path !== '/' ) {
+    return {
+      name: 'Login'
+    }
+  }
 })
 
 export default router

@@ -2,8 +2,8 @@
 
 namespace App\GraphQL\Mutations;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Support\Facades\Auth;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 
 
 final  class Login
@@ -15,37 +15,38 @@ final  class Login
 
     public function login($_, array $args)
     {
-        $credentials = [
+        $userProvider = $this->authManager->createUserProvider('users');
+        $user = $userProvider->retrieveByCredentials([
             'email'    => $args['email'],
             'password' => $args['password'],
-        ];
+        ]);
 
-        if (!Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+        if (!$user ||!$userProvider->validateCredentials($user, $args)) {
+            throw new AuthenticationException('The provided credentials are incorrect.');
         }
 
-        $user = Auth::user();
-
-        $userToken = $user->createToken('login');;
+        if ($user instanceof MustVerifyEmail &&!$user->hasVerifiedEmail()) {
+            throw new AuthenticationException('Your email address is not verified.');
+        }
 
         return [
-            'token' => $userToken->plainTextToken,
-            'expires_at' => now()->addDays(1),
+            'token' => $user->createToken('login')->plainTextToken,
+            'expires_at' => now()->addDay(1),
             'user' => $user,
         ];
     }
 
-    public function logout($root, array $args, GraphQLContext $context)
+    public function logout($root, array $args)
     {
-        auth()->user()->tokens()->delete();
-        Auth::logout();
-
+        if(auth()->user()) {
+            auth()->user()->tokens()->delete();   
+        }
+            
         return true;
     }
 
-    public function me($root, array $args, GraphQLContext $context)
+    public function me($root, array $args)
     {
-       ;
         return auth()->user();
     }
 

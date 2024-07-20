@@ -39,6 +39,11 @@ type Purchase {
     updated_at: DateTime!
 }
 
+type totalDashboar {
+  totalPuchase: Int
+  totalCustomer: Int
+  totalUser: Int
+}
 
 type AccessToken {
   token: String!,
@@ -53,30 +58,30 @@ input LoginInput {
 
 input CustomerSearchInput {
   name: String
-  phone: String
 }
 
 type Query {
     users: [User!]! @all
     user(id: ID @eq): User @find
     userSearch(username: String @like): User @find
-    logout: Boolean! @auth
     me: User @auth
 
-    customers: [Customer!]! @all
+    totalDashboar: totalDashboar @field(resolver: "App\\GraphQL\\Queries\\Dashboard@totalAll")
 
     customers: [Customer!]! @field(resolver: "App\\GraphQL\\Mutations\\Customer@customers")
-    customer(search: CustomerSearchInput): Customer @field(resolver: "App\\GraphQL\\Mutations\\Customer@customer")
+    customer(search: CustomerSearchInput): [Customer] @field(resolver: "App\\GraphQL\\Mutations\\Customer@customer")
+   
+    purchaseAll: [Purchase!] @field(resolver: "App\\GraphQL\\Mutations\\PurchaseMatation@allPurchase")
     purchases(customerId: ID!): [Purchase!]!  @field(resolver: "App\\GraphQL\\Mutations\\PurchaseMatation@purchases")
 }
 
 
 type Mutation {
-    registerUser(name: String!, email: String!, password: String!, username: String!, role: String!): User!
+    createUser(name: String!, email: String!, username: String!,  password: String!, role: String!): User! @create(resolver: "App\\GraphQL\\Mutations\\User@create")
+    deleteUser(id: ID!): Boolean! @field(resolver: "App\\GraphQL\\Mutations\\User@delete")
+
     login(input: LoginInput @spread): AccessToken! @field(resolver: "App\\GraphQL\\Mutations\\Login@login")
     logout: Boolean! @field(resolver: "App\\GraphQL\\Mutations\\Login@logout")
-
-
     createCustomer(name: String!, phone_number: String!, address: String, registration_date: Date, score: Int): Customer! @field(resolver: "App\\GraphQL\\Mutations\\Customer@createCustomer")
     updateCustomer(id: ID!, name: String, phone_number: String, address: String,  registration_date: Date, score: Int): Customer! @field(resolver: "App\\GraphQL\\Mutations\\Customer@updateCustomer")
     deleteCustomer(id: ID!): Boolean! @field(resolver: "App\\GraphQL\\Mutations\\Customer@deleteCustomer")

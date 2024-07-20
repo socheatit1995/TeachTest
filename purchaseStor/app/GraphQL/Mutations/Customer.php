@@ -17,9 +17,10 @@ final class Customer
     {
         $search = $args['search'];
         if ($search['name']) {
-            return ModelsCustomer::with('purchases')->where('name', 'like', "%{$search['name']}%")->first();
-        } elseif ($search['phone']) {
-            return ModelsCustomer::with('purchases')->where('phone_number', $search['phone'])->first();
+            return ModelsCustomer::with('purchases')
+            ->where('name', 'like', "%{$search['name']}%")
+            ->Orwhere('phone_number', 'like', "%{$search['name']}%")
+            ->get();
         }
         return null;
     }

@@ -19,6 +19,10 @@ final class PurchaseMatation
         return Purchase::with(['customer'])->where('customer_id', $customerId)->get();
     }
 
+    public function allPurchase () {
+        return Purchase::with(['customer'])->get();
+    }
+
     public function createPurchase($root, array $args)
     {
         $customer = Customer::find($args['customerId']);

@@ -6,6 +6,14 @@
 2. npm install
 3. npm run dev
 
+4. go to admin/src/grapql/client.js 
+to change port of you api 
+const httpLink = createHttpLink({
+    uri: 'http://localhost:8000/graphql',
+});
+
+
+  - 
 # Install Laravel 11 Project 
 
 1. cd to purchaseStor 
@@ -17,4 +25,6 @@
 7. php artisan db:seed
 8. php artisan serve
 
+go to App\Http\Middleware\Cors.php
+to allow url can access this api 
 

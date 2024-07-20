@@ -13,7 +13,6 @@ to change port of you api
 });
 
 
-  - 
 # Install Laravel 11 Project 
 
 1. cd to purchaseStor 

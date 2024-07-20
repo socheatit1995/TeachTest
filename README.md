@@ -8,7 +8,7 @@
 
 4. go to admin/src/grapql/client.js 
 to change port of you api 
-const httpLink = createHttpLink({
+- const httpLink = createHttpLink({
     uri: 'http://localhost:8000/graphql',
 });
 

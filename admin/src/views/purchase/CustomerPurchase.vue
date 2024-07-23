@@ -1,5 +1,11 @@
 <template>
     <CRow>
+      <CToast :autohide="true" color="success" class="text-white align-items-center toast_custom_style" visible v-if="messageSuccess !== ''">
+        <div class="d-flex">
+          <CToastBody>{{ messageSuccess }}</CToastBody>
+          <CToastClose class="me-2 m-auto" white />
+        </div>
+      </CToast>
       <CCol :xs="12">
         <CCard class="mb-4">
           <CCardHeader>
@@ -8,18 +14,19 @@
           <CCardBody>
                 <CForm @submit.prevent="handleSubmit" class="p-4">
                   <h1>Create Purchase</h1>
-                  <p class="text-body-secondary" v-if="messageSuccess !== ''">{{ messageSuccess }}</p>
                   <CInputGroup class="mb-3">
                     <CFormInput placeholder="Customer" v-model="searchQuery" autocomplete="Name or Phone Number" @input="onSearchCustomer($event)"/>
                     <CListGroup v-if="searchResults?.length > 0 && showFale" class="list_float">
                         <CListGroupItem @click.prevent="selectCustomer(customer)" v-for="customer in searchResults" :key="customer.id">{{ customer.name }} ({{ customer.phone_number }})</CListGroupItem>
                     </CListGroup>
+                    <CFormFeedback v-if="showErrorMessage?.customer" class="invalid-feedback"> {{  showErrorMessage?.customer  }} </CFormFeedback>
                 </CInputGroup>
                   <CInputGroup class="mb-3">
-                    <CFormInput  type="number" placeholder="Amount" v-model="amount" autocomplete="PhoneName" required/>
+                    <CFormInput  type="number" placeholder="Amount" v-model="amount" @input="onchangeAmount($event)"/>
+                    <CFormFeedback v-if="showErrorMessage?.amount" class="invalid-feedback"> {{  showErrorMessage?.amount  }} </CFormFeedback>
                   </CInputGroup>
                   <div class="text-rigth">
-                    <CButton type="submit" color="primary" shape="rounded-pill"> Save </CButton>
+                    <CButton type="submit" color="primary" shape="rounded-pill" :disabled="btnDisabled"> Save </CButton>
                   </div>
                 </CForm>
 
@@ -44,8 +51,9 @@
       const customers = ref([])
       const searchQuery = ref('')
       const selectedCustomer = ref(null)
-      const transactionAmount = ref(0)
       const showFale = ref(true);
+      const showErrorMessage = ref({});
+      const btnDisabled = ref(true);
 
       const SerchCustomer = gql`
         query customer($name: String!){
@@ -54,15 +62,24 @@
             }
         }
       `;
-        const { result, refetch } = useQuery(SerchCustomer,() => ({
+
+
+
+      const { result} = useQuery(SerchCustomer,() => ({
             name: searchQuery.value
         }))
 
       const onSearchCustomer = async (event) => {
         searchQuery.value = event.target.value
+        checkValidity(1);
+
         showFale.value = true;
             try {
-                customers.value = await result.value?.customer ?? [];
+              const customersData = await result.value?.customer ?? [];
+                customers.value = customersData.filter(customer => {
+                        return customer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                            customer.phone_number.includes(searchQuery.value)
+                    })
             } catch (error) {
                 console.error(error)
             //   alert('Error creating user')
@@ -76,13 +93,17 @@
                customer.phone_number.includes(searchQuery.value)
       })
     })
-
     const selectCustomer = (customer) => {
         selectedCustomer.value = customer,
         searchQuery.value = customer.name
         customerId.value = customer.id
         showFale.value = false
       }
+
+    const onchangeAmount = (event) => {
+        amount.value = event.target.value
+        checkValidity(2);
+    }
 
       const createPurchaseMutation = gql`
         mutation createPurchase (
@@ -109,31 +130,64 @@
       )
 
       const handleSubmit = async () => {
-        if(customerId.value === '' && amount.value === '') {
-            alert('Please Select Customer and Input Amount in all fields')
-            return ;
-        }
+
         try {
           await createPurchase();
           messageSuccess.value = 'Purchase created successfully'
+          resetField();
           router.replace('/purchase')
         } catch (error) {
           console.error(error)
-        //   alert('Error creating user')
         }
+      }
+
+      const checkValidity = (index) => {
+        if(index === 1) {
+          if(searchQuery.value.length > 0) {
+            showErrorMessage.value.customer = '';
+          } else {
+              showErrorMessage.value = {
+                customer: "Customer Is Required"
+              }
+          }
+        }
+        if(index === 2) {
+          if (amount.value.length > 0) {
+              showErrorMessage.value.amount = '';
+          } else {
+            showErrorMessage.value = {
+                amount: "Amount Is Required"
+              }
+          }
+        }
+        if(searchQuery.value.length > 0 && amount.value.length > 0) {
+          btnDisabled.value = false;
+        } else {
+          btnDisabled.value = true;
+        }
+      }
+      const resetField = () => {
+        searchQuery.value = '';
+        customerId.value = '';
+        amount.value = '';
       }
 
       return {
         showFale,
         searchQuery,
         searchResults,
-        onSearchCustomer,
-        selectCustomer,
+        showErrorMessage,
+        messageSuccess,
         customerId,
         amount,
-        handleSubmit,
         error,
         loading,
+        btnDisabled,
+        onSearchCustomer,
+        selectCustomer,
+        handleSubmit,
+        onchangeAmount,
+        checkValidity
       }
     },
   }
@@ -149,5 +203,8 @@
   }
   .list_float li {
         cursor: pointer;
+  }
+  .invalid-feedback {
+    display: block !important;
   }
 </style>

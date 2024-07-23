@@ -1,12 +1,13 @@
 <template>
     <CRow>
+
       <CCol :xs="12">
             <CCard class="mb-4">
             <CCardHeader>
                 <CRow :xs="{ gutterX: 5 }">
                     <CCol>
-                    <div class="p-3 "> 
-                        <strong>Customer</strong> 
+                    <div class="p-3 ">
+                        <strong>Customer</strong>
                     </div>
                     </CCol>
                     <CCol>
@@ -17,7 +18,7 @@
                 </CRow>
             </CCardHeader>
             <CCardBody>
-               
+
                 <CTable>
                     <CTableHead>
                         <CTableRow>
@@ -45,7 +46,7 @@
                                 <CButton @click="postdeleteCustomer(item.id)"  color="danger" shape="rounded-pill">Delete</CButton>
                             </CTableDataCell>
                         </CTableRow>
-                    </CTableBody>     
+                    </CTableBody>
                 </CTable>
             </CCardBody>
             </CCard>
@@ -53,16 +54,15 @@
     </CRow>
 </template>
 <script >
-import { ref , watch, onMounted, computed} from 'vue'
+import { ref , watch} from 'vue'
 import { useQuery, useMutation } from '@vue/apollo-composable'
 import { gql } from 'graphql-tag'
 import router from '@/router'
+
 export default {
     setup() {
         const CustomerData = ref([]);
         const messageSuccess = ref('')
-        const users = ref('')
-
         const QUERY_CUSTOMER = gql`
             query {
                 customers {
@@ -77,17 +77,16 @@ export default {
             }
         `;
         const { result, loading, error, refetch }  = useQuery(QUERY_CUSTOMER);
-        CustomerData.value = result?.value?.customers;  
+        CustomerData.value = result?.value?.customers;
 
         watch(result, value => {
             CustomerData.value = value?.customers
-            console.log(CustomerData.value)
         })
-    
+
         refetch()
         const goToCreate = () => router.replace({name: 'create-customer'})
 
-        const { mutate: deleteCustomer, onError } = useMutation(DELETE_CUSTOMER)
+        const { mutate: deleteCustomer } = useMutation(DELETE_CUSTOMER)
         const postdeleteCustomer = async (id) => {
             try {
                 await deleteCustomer({id: id})
@@ -99,23 +98,23 @@ export default {
                 alert('Error creating user')
             }
         }
-       
+
         return {
             CustomerData,
             messageSuccess,
             goToCreate,
             postdeleteCustomer,
             loading,
-            error,
+            error
         }
     },
 
-   
+
 }
-</script> 
+</script>
 <style scoped>
 /* .text-rigth {
     text-align: end !important;
 } */
- 
+
 </style>

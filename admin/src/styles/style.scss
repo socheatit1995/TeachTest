@@ -17,3 +17,12 @@
 .text-rigth {
     text-align: end !important;
 }
+.custom_form .invalid-feedback {
+  display: block !important;
+}
+.toast_custom_style {
+  position: absolute;
+  top: 65px;
+  z-index: 9999;
+  right: 30px;
+}

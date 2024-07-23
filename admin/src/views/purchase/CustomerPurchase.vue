@@ -22,7 +22,7 @@
                     <CButton type="submit" color="primary" shape="rounded-pill"> Save </CButton>
                   </div>
                 </CForm>
-                {{  customerId }}
+
                 <div v-if="loading">Loading...</div>
                 <div v-if="error">Error: {{ error.message }}</div>
               </CCardBody>
@@ -35,7 +35,7 @@
   import { useMutation, useQuery } from '@vue/apollo-composable'
   import gql from 'graphql-tag'
   import router from '@/router'
-  
+
   export default {
     setup () {
       const customerId = ref('')
@@ -46,7 +46,7 @@
       const selectedCustomer = ref(null)
       const transactionAmount = ref(0)
       const showFale = ref(true);
-      
+
       const SerchCustomer = gql`
         query customer($name: String!){
             customer(search: { name: $name}){
@@ -57,7 +57,7 @@
         const { result, refetch } = useQuery(SerchCustomer,() => ({
             name: searchQuery.value
         }))
-      
+
       const onSearchCustomer = async (event) => {
         searchQuery.value = event.target.value
         showFale.value = true;
@@ -68,7 +68,7 @@
             //   alert('Error creating user')
             }
       }
-      
+
       const searchResults = computed(() => {
       if (!searchQuery.value) return []
       return customers.value.filter(customer => {
@@ -98,16 +98,16 @@
         }
       `;
 
-  
+
       const { mutate: createPurchase, error, loading } = useMutation(createPurchaseMutation,
-        () => ({ 
+        () => ({
           variables: {
             customerId: Number(customerId.value),
             amount: Number(amount.value),
           },
         })
       )
-     
+
       const handleSubmit = async () => {
         if(customerId.value === '' && amount.value === '') {
             alert('Please Select Customer and Input Amount in all fields')
@@ -122,7 +122,7 @@
         //   alert('Error creating user')
         }
       }
-      
+
       return {
         showFale,
         searchQuery,
@@ -145,9 +145,9 @@
     background: #fff;
     z-index: 999;
     min-width: 500px
-    
+
   }
-  .list_float li {  
+  .list_float li {
         cursor: pointer;
   }
 </style>

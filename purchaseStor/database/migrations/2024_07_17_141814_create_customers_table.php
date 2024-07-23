@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone_number');
-            $table->date('registration_date');
-            $table->text('address');
+            $table->date('registration_date')->nullable();
+            $table->text('address')->nullable();
             $table->integer('score')->default(0);
             $table->timestamps();
         });

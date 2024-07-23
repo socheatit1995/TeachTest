@@ -32,8 +32,8 @@ final class Customer
         $customer = new ModelsCustomer();
         $customer->name = $args['name'];
         $customer->phone_number = $args['phone_number'];
-        $customer->registration_date = $args['registration_date'];
-        $customer->address = $args['address'];
+        $customer->registration_date = $args['registration_date']?? date('Y-m-d') ;
+        $customer->address = $args['address'] ?? 'N/A';
         $customer->score = $args['score'];
         $customer->save();
 
@@ -50,8 +50,8 @@ final class Customer
 
         $customer->name = $args['name'];
         $customer->phone_number = $args['phone_number'];
-        $customer->registration_date = $args['registration_date'];
-        $customer->address = $args['address'];
+        $customer->registration_date = $args['registration_date']?? date('Y-m-d') ;
+        $customer->address = $args['address'] ?? 'N/A';
         $customer->score = $args['score'];
         $customer->save();
 
